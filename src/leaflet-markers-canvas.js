@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import RBush from 'rbush';
-import toImg from 'react-svg-to-image';
+
+import { convert } from './svg-to-img';
 
 //const toImg1 = require('react-svg-to-image');
 const markersCanvas = {
@@ -314,7 +315,7 @@ const markersCanvas = {
                     this._icons[hash].elements.push({ marker, x, y });
                 }
             } else {
-                toImg(html)
+                convert(html)
             }
         }
     },

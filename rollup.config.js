@@ -1,7 +1,8 @@
+import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
 
-import buble from '@rollup/plugin-buble';
 import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
     input: "src/leaflet-markers-canvas.js",
@@ -16,7 +17,23 @@ export default {
             plugins: [uglify()],
         },
     ],
-    plugins: [buble(),
-    commonjs({ transformMixedEsModules: true })],
-    external: ["rbush", "leaflet", "react-svg-to-image"],
+    plugins: [
+        babel({
+            babelrc: false,
+            exclude: 'node_modules/**',
+            presets: [
+                [
+                    '@babel/preset-env',
+                    {
+                        corejs: 3,
+                        modules: false,
+                        useBuiltIns: 'usage',
+                    },
+                ],
+            ],
+        }),
+        commonjs(),
+        nodeResolve(),
+    ],
+    external: ["rbush", "leaflet"],
 };

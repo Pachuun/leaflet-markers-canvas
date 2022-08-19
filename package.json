@@ -25,16 +25,18 @@
         "url": "https://github.com/francoisromain/leaflet-markers-canvas/issues"
     },
     "devDependencies": {
-        "@rollup/plugin-buble": "^0.21.3",
-        "@rollup/plugin-commonjs": "^22.0.2",
+        "@babel/core": "^7.18.10",
+        "@babel/preset-env": "^7.18.10",
+        "@rollup/plugin-commonjs": "22.0.0",
+        "@rollup/plugin-node-resolve": "13.1.0",
         "eslint": "^7.17.0",
         "rollup": "2.68.0",
-        "rollup-plugin-uglify": "^6.0.4"
+        "rollup-plugin-babel": "4.4.0",
+        "rollup-plugin-uglify": "6.0.4"
     },
     "peerDependencies": {
         "leaflet": "^1.7.1",
-        "rbush": "^3.0.1",
-        "react-svg-to-image": "^3.0.0"
+        "rbush": "^3.0.1"
     },
     "dependencies": {}
 }
