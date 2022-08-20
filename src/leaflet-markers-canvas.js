@@ -197,6 +197,17 @@ const markersCanvas = {
         return this.redraw();
     },
 
+    registerImage(hash, image) {
+        this._icons[hash] = {
+            image,
+            isLoaded: true,
+        };
+    },
+
+    convert(target, name, params) {
+        return convert(target, name, params)
+    },
+
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     //
     // private: global methods
@@ -274,7 +285,7 @@ const markersCanvas = {
         const { iconUrl, html, iconAnchor, iconSize } = marker.options.icon.options;
         let hash = undefined;
         if (html) {
-            hash = this._hash(html);
+            hash = this.hash(html);
         }
         if (marker.image) {
             this._drawImage(marker, { x, y });
@@ -450,7 +461,7 @@ const markersCanvas = {
         L.DomUtil.setTransform(this._canvas, offset, scale);
     },
 
-    _hash(str) {
+    hash(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
             const char = str.charCodeAt(i);

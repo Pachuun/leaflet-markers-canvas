@@ -406,23 +406,21 @@
       return css;
     };
 
-    var root = document.querySelector(target);
-    selfCopyCss(root);
-    root.querySelectorAll('*').forEach(function (elt) {
+    selfCopyCss(target);
+    target.querySelectorAll('*').forEach(function (elt) {
       return selfCopyCss(elt);
     });
   }; // inline styles
 
 
   var copyToCanvas = function copyToCanvas(_ref) {
-    var target = _ref.target,
+    var template = _ref.template,
         scale = _ref.scale,
         format = _ref.format,
         quality = _ref.quality;
-    var svg = document.querySelector(target);
-    var svgData = new XMLSerializer().serializeToString(svg);
+    var svgData = new XMLSerializer().serializeToString(template);
     var canvas = document.createElement('canvas');
-    var svgSize = svg.getBoundingClientRect(); //Resize can break shadows
+    var svgSize = template.getBoundingClientRect(); //Resize can break shadows
 
     canvas.width = svgSize.width * scale;
     canvas.height = svgSize.height * scale;
@@ -465,34 +463,22 @@
           quality,
           _ref4$download,
           download,
-          _ref4$ignore,
-          ignore,
-          elt,
-          rememberHTML,
-          _elt,
+          template,
           _args = arguments;
 
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _ref4 = _args.length > 2 && _args[2] !== undefined ? _args[2] : {}, _ref4$scale = _ref4.scale, scale = _ref4$scale === void 0 ? 1 : _ref4$scale, _ref4$format = _ref4.format, format = _ref4$format === void 0 ? 'png' : _ref4$format, _ref4$quality = _ref4.quality, quality = _ref4$quality === void 0 ? 0.92 : _ref4$quality, _ref4$download = _ref4.download, download = _ref4$download === void 0 ? true : _ref4$download, _ref4$ignore = _ref4.ignore, ignore = _ref4$ignore === void 0 ? null : _ref4$ignore;
-              elt = document.querySelector(target); //Remember all HTML, as we will modify the styles
+              _ref4 = _args.length > 2 && _args[2] !== undefined ? _args[2] : {}, _ref4$scale = _ref4.scale, scale = _ref4$scale === void 0 ? 1 : _ref4$scale, _ref4$format = _ref4.format, format = _ref4$format === void 0 ? 'png' : _ref4$format, _ref4$quality = _ref4.quality, quality = _ref4$quality === void 0 ? 0.92 : _ref4$quality, _ref4$download = _ref4.download, download = _ref4$download === void 0 ? true : _ref4$download;
+              template = document.createElement('template');
+              template.innerHTML = target; //Set all the css styles inline
 
-              rememberHTML = elt.innerHTML; //Remove unwanted elements
+              inlineStyles(template); //Copy all html to a new canvas
 
-              if (ignore != null) {
-                _elt = document.querySelector(ignore);
-
-                _elt.parentNode.removeChild(_elt);
-              } //Set all the css styles inline
-
-
-              inlineStyles(target); //Copy all html to a new canvas
-
-              _context.next = 7;
+              _context.next = 6;
               return copyToCanvas({
-                target: target,
+                template: template,
                 scale: scale,
                 format: format,
                 quality: quality
@@ -502,16 +488,14 @@
                   file: file,
                   name: name,
                   format: format
-                }); //Undo the changes to inline styles
-
-                elt.innerHTML = rememberHTML;
+                });
                 return file;
               })["catch"](console.error);
 
-            case 7:
+            case 6:
               return _context.abrupt("return", _context.sent);
 
-            case 8:
+            case 7:
             case "end":
               return _context.stop();
           }
@@ -705,6 +689,15 @@
       L__default["default"].Util.setOptions(this, options);
       return this.redraw();
     },
+    registerImage: function registerImage(hash, image) {
+      this._icons[hash] = {
+        image: image,
+        isLoaded: true
+      };
+    },
+    convert: function convert$1(target, name, params) {
+      return convert(target, name, params);
+    },
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     //
     // private: global methods
@@ -795,7 +788,7 @@
       var hash = undefined;
 
       if (html) {
-        hash = this._hash(html);
+        hash = this.hash(html);
       }
 
       if (marker.image) {
@@ -1014,7 +1007,7 @@
 
       L__default["default"].DomUtil.setTransform(this._canvas, offset, scale);
     },
-    _hash: function _hash(str) {
+    hash: function hash(str) {
       var hash = 0;
 
       for (var i = 0; i < str.length; i++) {

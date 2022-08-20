@@ -97,8 +97,12 @@
 
             markers.push(marker);
         }
+        markersCanvas.convert(divIcon.options.html).then((result) => {
+            const hash = markersCanvas.hash(divIcon.options.html)
+            markersCanvas.registerImage(hash, result)
+            markersCanvas.addMarkers(markers);
+        })
 
-        markersCanvas.addMarkers(markers);
     </script>
 </body>
 

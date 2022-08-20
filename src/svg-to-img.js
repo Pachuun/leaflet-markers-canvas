@@ -12,16 +12,14 @@ const inlineStyles = target => {
         return css;
     };
 
-    const root = document.querySelector(target);
-    selfCopyCss(root);
-    root.querySelectorAll('*').forEach(elt => selfCopyCss(elt));
+    selfCopyCss(target);
+    target.querySelectorAll('*').forEach(elt => selfCopyCss(elt));
 }; // inline styles
 
-const copyToCanvas = ({ target, scale, format, quality }) => {
-    var svg = document.querySelector(target);
-    var svgData = new XMLSerializer().serializeToString(svg);
+const copyToCanvas = ({ template, scale, format, quality }) => {
+    var svgData = new XMLSerializer().serializeToString(template);
     var canvas = document.createElement('canvas');
-    var svgSize = svg.getBoundingClientRect();
+    var svgSize = template.getBoundingClientRect();
 
     //Resize can break shadows
     canvas.width = svgSize.width * scale;
@@ -54,23 +52,17 @@ const downloadImage = ({ file, name, format }) => {
 
 // module.exports 
 
-const convert = async (target, name, { scale = 1, format = 'png', quality = 0.92, download = true, ignore = null } = {}) => {
-    const elt = document.querySelector(target);
-    //Remember all HTML, as we will modify the styles
-    const rememberHTML = elt.innerHTML;
+const convert = async (target, name, { scale = 1, format = 'png', quality = 0.92, download = true } = {}) => {
+    let template = document.createElement('template');
+    template.innerHTML = target;
 
-    //Remove unwanted elements
-    if (ignore != null) {
-        const elt = document.querySelector(ignore);
-        elt.parentNode.removeChild(elt);
-    }
 
     //Set all the css styles inline
-    inlineStyles(target, ignore);
+    inlineStyles(template);
 
     //Copy all html to a new canvas
     return await copyToCanvas({
-        target,
+        template,
         scale,
         format,
         quality
@@ -78,8 +70,6 @@ const convert = async (target, name, { scale = 1, format = 'png', quality = 0.92
         .then(file => {
             //Download if necessary
             if (download) downloadImage({ file, name, format });
-            //Undo the changes to inline styles
-            elt.innerHTML = rememberHTML;
             return file;
         })
         .catch(console.error);
