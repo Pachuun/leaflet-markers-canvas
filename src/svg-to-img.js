@@ -24,8 +24,8 @@ const copyToCanvas = ({ target, scale, format, quality }) => {
     template.innerHTML = target;
     var svg = template.content.firstChild;
     var dims = svg.attributes.getNamedItem('viewBox').value.match(/\d+/g);
-    var height = svg.attributes.getNamedItem('height').value.match(/\d+/)[2];
-    var width = svg.attributes.getNamedItem('width').value.match(/\d+/)[3];
+    var height = dims[2];
+    var width = dims[3];
     var svgSize = { width, height }
 
     //Resize can break shadows

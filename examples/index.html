@@ -59,11 +59,7 @@
 
         markersCanvas.addTo(map);
 
-        var icon = L.icon({
-            iconUrl: "marker.png",
-            iconSize: [20, 32],
-            iconAnchor: [10, 0],
-        });
+
 
         var divIcon = L.divIcon({
             html: `<svg version="1.1" id="closed_red_normal_110" xmlns="http://www.w3.org/2000/svg" width="50px" height="50px" viewBox="0 0 50 50" enable-background="new 0 0 50 50" xml:space="preserve">
@@ -80,27 +76,37 @@
 
         var markers = [];
 
-        for (var i = 0; i < 10000; i++) {
-            var marker = L.marker(
-                [58.5578 + Math.random() * 1.8, 29.0087 + Math.random() * 3.6],
-                { icon: divIcon }
-            )
-                .bindPopup("I Am " + i)
-                .on({
-                    mouseover(e) {
-                        this.openPopup();
-                    },
-                    mouseout(e) {
-                        this.closePopup();
-                    },
-                });
 
-            markers.push(marker);
-        }
         markersCanvas.convert(divIcon.options.html).then((result) => {
             const hash = markersCanvas.hash(divIcon.options.html)
             const img = document.createElement('img');
             img.setAttribute('src', result)
+
+            var icon = L.icon({
+                iconUrl: result,
+                iconAnchor: [19, 38],
+                iconSize: [38, 38]
+            });
+
+            for (var i = 0; i < 10000; i++) {
+                var marker = L.marker(
+                    [58.5578 + Math.random() * 1.8, 29.0087 + Math.random() * 3.6],
+                    { icon }
+                )
+                    .bindPopup("I Am " + i)
+                    .on({
+                        mouseover(e) {
+                            this.openPopup();
+                        },
+                        mouseout(e) {
+                            this.closePopup();
+                        },
+                    });
+
+                markers.push(marker);
+            }
+
+
             markersCanvas.registerImage(hash, img);
             markersCanvas.addMarkers(markers);
         })

@@ -2373,8 +2373,9 @@
     var template = document.createElement('template');
     template.innerHTML = target;
     var svg = template.content.firstChild;
-    var height = svg.attributes.getNamedItem('height').value.match(/\d+/)[0];
-    var width = svg.attributes.getNamedItem('width').value.match(/\d+/)[0];
+    var dims = svg.attributes.getNamedItem('viewBox').value.match(/\d+/g);
+    var height = dims[2];
+    var width = dims[3];
     var svgSize = {
       width: width,
       height: height
@@ -2399,18 +2400,6 @@
     });
   };
 
-  var downloadImage = function downloadImage(_ref2) {
-    var file = _ref2.file,
-        name = _ref2.name,
-        format = _ref2.format;
-    var a = document.createElement('a');
-    a.className = "display-none";
-    a.download = "".concat(name, ".").concat(format);
-    a.href = file;
-    document.body.appendChild(a);
-    a.click();
-  }; // module.exports 
-
 
   var convert = /*#__PURE__*/function () {
     var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(target, name) {
@@ -2421,15 +2410,13 @@
           format,
           _ref4$quality,
           quality,
-          _ref4$download,
-          download,
           _args = arguments;
 
       return _regeneratorRuntime().wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              _ref4 = _args.length > 2 && _args[2] !== undefined ? _args[2] : {}, _ref4$scale = _ref4.scale, scale = _ref4$scale === void 0 ? 1 : _ref4$scale, _ref4$format = _ref4.format, format = _ref4$format === void 0 ? 'png' : _ref4$format, _ref4$quality = _ref4.quality, quality = _ref4$quality === void 0 ? 0.92 : _ref4$quality, _ref4$download = _ref4.download, download = _ref4$download === void 0 ? true : _ref4$download;
+              _ref4 = _args.length > 2 && _args[2] !== undefined ? _args[2] : {}, _ref4$scale = _ref4.scale, scale = _ref4$scale === void 0 ? 1 : _ref4$scale, _ref4$format = _ref4.format, format = _ref4$format === void 0 ? 'png' : _ref4$format, _ref4$quality = _ref4.quality, quality = _ref4$quality === void 0 ? 0.92 : _ref4$quality;
               _context.next = 3;
               return copyToCanvas({
                 target: target,
@@ -2437,12 +2424,6 @@
                 format: format,
                 quality: quality
               }).then(function (file) {
-                //Download if necessary
-                if (download) downloadImage({
-                  file: file,
-                  name: name,
-                  format: format
-                });
                 return file;
               })["catch"](console.error);
 
