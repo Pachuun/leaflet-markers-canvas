@@ -99,7 +99,9 @@
         }
         markersCanvas.convert(divIcon.options.html).then((result) => {
             const hash = markersCanvas.hash(divIcon.options.html)
-            markersCanvas.registerImage(hash, result)
+            const img = document.createElement('img');
+            img.setAttribute('src', result)
+            markersCanvas.registerImage(hash, img);
             markersCanvas.addMarkers(markers);
         })
 

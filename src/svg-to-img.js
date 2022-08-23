@@ -16,10 +16,17 @@ const inlineStyles = target => {
     target.querySelectorAll('*').forEach(elt => selfCopyCss(elt));
 }; // inline styles
 
-const copyToCanvas = ({ template, scale, format, quality }) => {
-    var svgData = new XMLSerializer().serializeToString(template);
+const copyToCanvas = ({ target, scale, format, quality }) => {
+    //var svgData = new XMLSerializer().serializeToString(target);
     var canvas = document.createElement('canvas');
-    var svgSize = template.getBoundingClientRect();
+    //var svgSize = target.getBoundingClientRect();
+    var template = document.createElement('template');
+    template.innerHTML = target;
+    var svg = template.content.firstChild;
+    var dims = svg.attributes.getNamedItem('viewBox').value.match(/\d+/g);
+    var height = svg.attributes.getNamedItem('height').value.match(/\d+/)[2];
+    var width = svg.attributes.getNamedItem('width').value.match(/\d+/)[3];
+    var svgSize = { width, height }
 
     //Resize can break shadows
     canvas.width = svgSize.width * scale;
@@ -31,7 +38,9 @@ const copyToCanvas = ({ template, scale, format, quality }) => {
     ctxt.scale(scale, scale);
 
     var img = document.createElement('img');
-    img.setAttribute('src', 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData))));
+    const buf = Buffer.from(unescape(encodeURIComponent(target)), "latin1");
+    const buf64 = buf.toString('base64');
+    img.setAttribute('src', 'data:image/svg+xml;base64,' + buf64);
     return new Promise(resolve => {
         img.onload = () => {
             ctxt.drawImage(img, 0, 0);
@@ -53,23 +62,21 @@ const downloadImage = ({ file, name, format }) => {
 // module.exports 
 
 const convert = async (target, name, { scale = 1, format = 'png', quality = 0.92, download = true } = {}) => {
-    let template = document.createElement('template');
-    template.innerHTML = target;
+    //let template = document.createElement('template');
+    //template.innerHTML = target;
 
 
     //Set all the css styles inline
-    inlineStyles(template);
+    //inlineStyles(target);
 
     //Copy all html to a new canvas
     return await copyToCanvas({
-        template,
+        target,
         scale,
         format,
         quality
     })
         .then(file => {
-            //Download if necessary
-            if (download) downloadImage({ file, name, format });
             return file;
         })
         .catch(console.error);

@@ -318,7 +318,7 @@ const markersCanvas = {
             }
         } else if (hash) {
             if (this._icons[hash]) {
-                marker.image = this._icons[iconUrl].image;
+                marker.image = this._icons[hash].image;
 
                 if (this._icons[hash].isLoaded) {
                     this._drawImage(marker, { x, y });
